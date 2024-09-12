@@ -1,6 +1,6 @@
 ## Setup
 ```
-pip install git+https://github.com/JoaoCalem/Conformal-Sparsemax
+pip install git+https://github.com/JoaoCalem/EntmaxCP
 ```
 
 ## Usage
