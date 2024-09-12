@@ -24,6 +24,10 @@ class Datasets(ABC):
 
         test_dataset = self._get_dataset(transform, train=False)
         self._test = DataLoader(test_dataset, batch_size=batch_size)
+        
+        if transform=='vit':
+            self.vit_processor = AutoImageProcessor.from_pretrained(
+                            "google/vit-base-patch16-224",use_fast=True)
     
     @property
     def train(self):
@@ -53,8 +57,7 @@ class Datasets(ABC):
                 [transforms.ToTensor(),
                 normalize])
         elif transform == 'vit':
-            transform = lambda x: AutoImageProcessor.from_pretrained(
-                            "google/vit-base-patch16-224")(x)['pixel_values'][0]
+            transform = lambda x: self.vit_processor(x)['pixel_values'][0]
         else:
             transform = transforms.Compose([transforms.ToTensor()])
         
