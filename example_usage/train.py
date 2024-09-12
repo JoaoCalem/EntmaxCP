@@ -91,7 +91,7 @@ def run_train(model_type, dataset, loss, save_name, seed, epochs, patience):
         'f1_history':f1_history,
     }
 
-    with open(f'results/{save_name}.json', 'w') as f:
+    with open(f'models/history/{save_name}.json', 'w') as f:
         json.dump(results, f)
         
     torch.save(model.state_dict(), f'models/{save_name}.pth')
