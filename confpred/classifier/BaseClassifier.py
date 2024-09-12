@@ -12,6 +12,9 @@ class BaseClassifier(ABC, nn.Module):
             self,
             transformation: str = 'softmax',
             ):
+        
+        nn.Module.__init__(self)
+        
         self._transformation = transformation
         self.train()
     
