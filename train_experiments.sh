@@ -2,7 +2,7 @@
 
 # Define the list of models, datasets, and losses to loop through
 #models=("MNIST" "CIFAR10" "CIFAR100")  # Replace with your models
-datasets=("CIFAR10","CIFAR100")  # Replace with your datasets
+datasets=("CIFAR10" "CIFAR100")  # Replace with your datasets
 losses=("entmax" "sparsemax" "softmax")  # Replace with your loss functions
 seeds=(23 05 19 95 42)  # Replace with your seeds
 # Define the other optional parameters
