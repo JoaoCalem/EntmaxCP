@@ -21,7 +21,7 @@ def run_train(model_type, dataset, loss, save_name, seed, epochs, patience):
     torch.backends.cudnn.benchmark = False
     # Set a fixed value for the hash seed
     os.environ["PYTHONHASHSEED"] = str(seed)
-    print(f"Random seed set as {seed}")
+    print(f"Random seed set as {seed}", flush=True)
     
     device = 'cuda:1' if torch.cuda.is_available() and torch.cuda.device_count()>1 else 'cuda' if torch.cuda.is_available() else 'cpu'
     print(device)
