@@ -8,16 +8,16 @@ seeds=(23 05 19 95 42)  # Replace with your seeds
 # Define the other optional parameters
 epochs=1  # Default number of epochs
 patience=3  # Default patience
-model="cnn"
+model="vit"
 # Loop through each combination of model, dataset, and loss
-for seed in "${seeds[@]}"
+for loss in "${losses[@]}"
 do
     for dataset in "${datasets[@]}"
     do
-        for loss in "${losses[@]}"
+        for seed in "${seeds[@]}"
         do
             # Create a unique save filename based on model, dataset, and loss
-            save_filename="${model}_${dataset}_${loss}_${seed}_${epochs}_model.pth"
+            save_filename="${model}_${dataset}_${loss}_${seed}_${epochs}_model"
 
             # Run the Python script with the current arguments
             python example_usage/train.py "$model" "$dataset" "$loss" "$save_filename" --seed "$seed" --epochs "$epochs" --patience "$patience"
