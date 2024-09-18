@@ -28,16 +28,3 @@ class ImageNet(Datasets):
             split=split,
             transform=transform
         )
-        
-    def _dataset(self, norm):
-        data_class, normalize = self._dataset_class()
-        
-        if norm:
-            transform = transforms.Compose(
-                [transforms.ToTensor(),
-                transforms.Resize([256,256]),
-                normalize,])
-        else:
-            transform = transforms.Compose([transforms.ToTensor()])
-        
-        return data_class, transform
