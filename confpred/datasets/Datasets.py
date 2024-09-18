@@ -57,7 +57,7 @@ class Datasets(ABC):
                 [transforms.ToTensor(),
                 normalize])
         elif transform == 'vit':
-            transform = lambda x: self.vit_processor(x)['pixel_values'][0]
+            transform = lambda x: self.vit_processor(x.convert('RGB'))['pixel_values'][0]
         else:
             transform = transforms.Compose([transforms.ToTensor()])
         
