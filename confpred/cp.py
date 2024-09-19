@@ -9,7 +9,7 @@ import pandas as pd
 import os.path
 import pickle
 
-def run_cp(dataset, loss, alpha):
+def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
     #loss = 'softmax' #sparsemax, softmax or entmax15
     transformation = 'logits'
     #dataset='CIFAR100' #CIFAR100 or MNIST
@@ -43,23 +43,23 @@ def run_cp(dataset, loss, alpha):
 
     data = data_class[dataset](0.2, 16, 3000, True)
     
-    fname = f'./data/predictions/{dataset}_test_{loss}_{transformation}_proba.pickle'
+    fname = f'./data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
     if os.path.isfile(fname):
         print('Loading predictions.')
-        path = f'./data/predictions/{dataset}_test_{loss}_{transformation}_proba.pickle'
+        path = f'./data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
         with open(path, 'rb') as f:
             test_proba = pickle.load(f)
-        path = f'./data/predictions/{dataset}_test_true.pickle'
+        path = f'./data/predictions/{dataset}_{seed}_test_true.pickle'
         with open(path, 'rb') as f:
             test_true_enc = pickle.load(f)
-        path = f'./data/predictions/{dataset}_cal_{loss}_{transformation}_proba.pickle'
+        path = f'./data/predictions/{model_type}_{dataset}_cal_{loss}_{transformation}_{seed}_proba.pickle'
         with open(path, 'rb') as f:
             cal_proba = pickle.load(f)
-        path = f'./data/predictions/{dataset}_cal_true.pickle'
+        path = f'./data/predictions/{dataset}_{seed}_cal_true.pickle'
         with open(path, 'rb') as f:
             cal_true_enc = pickle.load(f)
     else:
-        model.load_state_dict(torch.load(f'./models/{dataset}_{loss}.pth', map_location=torch.device(device)))
+        model.load_state_dict(torch.load(f'./models/{model_type}_{dataset}_{loss}_{seed}_{epochs}_model.pth', map_location=torch.device(device)))
         print('Running predictions.')
         if loss == 'sparsemax':
             criterion = SparsemaxLoss()
@@ -90,11 +90,11 @@ def run_cp(dataset, loss, alpha):
         predictions = {'test':{'proba':test_proba,'true':test_true_enc},
                        'cal':{'proba':cal_proba,'true':cal_true_enc}}
         for dataset_type in ['cal','test']:
-            with open(f'./data/predictions/{dataset}_{dataset_type}_true.pickle', 'wb') as f:
+            with open(f'./data/predictions/{dataset}_{seed}_{dataset_type}_true.pickle', 'wb') as f:
                 pickle.dump(predictions[dataset_type]['true'], f)
             with open(
-                f'./data/predictions/{dataset}_{dataset_type}_{loss}' +
-                    f'_{transformation}_{"proba"}.pickle'
+                f'./data/predictions/{model_type}_{dataset}_{dataset_type}_{loss}' +
+                    f'_{transformation}_{seed}_{"proba"}.pickle'
                 , 'wb'
             ) as f:
                 pickle.dump(predictions[dataset_type]["proba"], f)
