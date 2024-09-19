@@ -23,8 +23,8 @@ class BaseClassifier(ABC, nn.Module):
         pass
        
     @final    
-    def forward(self, x):
-        x = self.__get_logits__(x)
+    def forward(self, *inputs):
+        x = self.__get_logits__(*inputs)
         return self._final(x)
         
         

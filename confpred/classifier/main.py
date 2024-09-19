@@ -21,19 +21,16 @@ def evaluate(model, dataloader, criterion, logits=False):
     to_numpy = lambda x: x.detach().cpu().numpy() if "cuda" in device else x.numpy()
     with torch.no_grad():
         for data in dataloader:
-            x, y = data
-            x = x.to(device)
-            y = y.to(device)
+            data = [d.to(device) for d in data]
+            inputs = data[:-1]
+            labels = data[-1]
             with torch.no_grad():
-                if logits:
-                    outputs = model.forward(x)
-                else:
-                    outputs = model(x)
+                outputs = model(*inputs)
             pred_proba.append(to_numpy(outputs))
             pred_labels.append(to_numpy(outputs.argmax(dim=-1)))
-            true_labels.append(to_numpy(y))
+            true_labels.append(to_numpy(labels))
             
-            losses.append(criterion(outputs, y))
+            losses.append(criterion(outputs, labels))
                 
     pred_proba = np.concatenate(pred_proba)
     pred_labels = np.concatenate(pred_labels)
@@ -67,15 +64,15 @@ def train(model,
             # zero the parameter gradients
         for _, data in tqdm(enumerate(train_dataloader, 0),total=len(train_dataloader)):
             # get the inputs; data is a list of [inputs, labels]
-            inputs, labels = data
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            data = [d.to(device) for d in data]
+            inputs = data[:-1]
+            labels = data[-1]
 
             # zero the parameter gradients
             optimizer.zero_grad()
 
             # forward + backward + optimize
-            outputs = model(inputs)
+            outputs = model(*inputs)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
