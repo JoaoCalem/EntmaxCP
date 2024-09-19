@@ -1,9 +1,9 @@
-from confpred.datasets import Datasets
+from .TorchVisionDatasets import TorchVisionDatasets
 
 import torchvision
 import torchvision.transforms as transforms
 
-class ImageNet(Datasets):
+class ImageNet(TorchVisionDatasets):
     def __init__(
             self,
             valid_ratio: float,

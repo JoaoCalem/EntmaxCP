@@ -113,6 +113,7 @@ def train_epoch(model, dataloader, optimizer, scheduler, device):
         # Forward pass to compute the outputs and loss
         outputs = model(input_ids, attention_mask=attention_masks, labels=labels)
         loss = outputs[0]
+        breakpoint()
         total_loss += loss.item()
         
         # Perform a backward pass and update optimizer/scheduler steps

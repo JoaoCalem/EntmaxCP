@@ -1,7 +1,7 @@
 import argparse
 
-from confpred.classifier import FineTuneViT, CNN, train, evaluate
-from confpred.datasets import CIFAR10, CIFAR100, MNIST, ImageNet
+from confpred.classifier import FineTuneBertForSequenceClassification, FineTuneViT, CNN, train, evaluate
+from confpred.datasets import CIFAR10, CIFAR100, MNIST, ImageNet, NewsGroups
 from entmax.losses import SparsemaxLoss, Entmax15Loss
 import json
 import torch
@@ -39,16 +39,28 @@ def run_train(model_type, dataset, loss, save_name, seed, epochs, patience):
         'CIFAR10': CIFAR10,
         'MNIST': MNIST,
     }
+    
     if model_type=='vit':
         transforms = 'vit'
-    else:
+    elif model_type=='cnn':
         transforms = 'norm'
-    data = data_class[dataset](0.2, 8, 3000, transforms)
+    
+    if dataset=='NewsGroups':
+        data = NewsGroups(0.2, 8, 3000)
+    else:
+        data = data_class[dataset](0.2, 8, 3000, transforms)
 
-
-    n_class = 100 if dataset == 'CIFAR100' else 1000 if dataset == 'ImageNet' else 10
-    input_size = 256 if dataset == 'ImageNet' else 32
+    if dataset == 'CIFAR100':
+        n_class = 100
+    elif dataset == 'ImageNet':
+        n_class = 1000
+    elif dataset == 'NewsGroups':
+        n_class = 20
+    else:
+        n_class = 10
+        
     if model_type == 'cnn':
+        input_size = 256 if dataset == 'ImageNet' else 32
         if dataset in ['CIFAR100','CIFAR10','ImageNet']:
             model = CNN(n_class,
                         input_size,
@@ -65,8 +77,10 @@ def run_train(model_type, dataset, loss, save_name, seed, epochs, patience):
                         28,
                         1,
                         transformation=loss).to(device)
-    if model_type == 'vit':
+    elif model_type == 'vit':
         model = FineTuneViT(n_class,transformation=loss).to(device)
+    elif model_type == 'bert':
+        model = FineTuneBertForSequenceClassification(n_class, transformation=loss).to(device)
         
     model, train_history, val_history, f1_history = train(model,
                                                 data.train,

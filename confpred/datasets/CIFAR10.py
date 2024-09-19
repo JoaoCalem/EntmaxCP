@@ -1,9 +1,9 @@
-from confpred.datasets import Datasets
+from .TorchVisionDatasets import TorchVisionDatasets
 
 import torchvision
 import torchvision.transforms as transforms
 
-class CIFAR10(Datasets):
+class CIFAR10(TorchVisionDatasets):
     def __init__(
             self,
             valid_ratio: float,
