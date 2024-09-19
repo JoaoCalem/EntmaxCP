@@ -115,7 +115,7 @@ def train_epoch(model, dataloader, optimizer, scheduler, device):
         loss = outputs[0]
         breakpoint()
         total_loss += loss.item()
-
+        
         # Perform a backward pass and update optimizer/scheduler steps
         loss.backward()
         optimizer.step()
