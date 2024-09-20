@@ -40,6 +40,9 @@ class BaseClassifier(ABC, nn.Module):
             self._final = lambda x: sparsemax(x,-1)
         elif self._transformation=='entmax':
             self._final = lambda x: entmax15(x,-1)
+        elif self._transformation=='logits':
+            self._final = lambda x: x
+            
     def train(self, mode=True):
         """
         Set model to training mode.

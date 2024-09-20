@@ -42,12 +42,14 @@ def run_train(model_type, dataset, loss, save_name, seed, epochs, patience):
                                                 data.dev,
                                                 criterion,
                                                 epochs=epochs,
-                                                patience=patience)
+                                                patience=patience,
+                                                device=device)
 
     _, predicted_labels, true_labels, test_loss = evaluate(
                                                         model,
                                                         data.test,
-                                                        criterion)
+                                                        criterion,
+                                                        device=device)
 
     f1 = f1_score(true_labels, predicted_labels, average='weighted')
 

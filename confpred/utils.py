@@ -1,3 +1,7 @@
+import os
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # This is your Project Root
+
 class EarlyStopper:
     def __init__(self, patience=1, min_delta=0):
         self.patience = patience
@@ -16,3 +20,5 @@ class EarlyStopper:
             if self.counter >= self.patience:
                 return self.model
         return None
+    
+    

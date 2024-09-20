@@ -1,7 +1,9 @@
 from .TorchVisionDatasets import TorchVisionDatasets
+from confpred.utils import ROOT_DIR
 
 import torchvision
 import torchvision.transforms as transforms
+import os
 
 class ImageNet(TorchVisionDatasets):
     def __init__(
@@ -24,7 +26,7 @@ class ImageNet(TorchVisionDatasets):
             split='train'
         data_class, transform = self._dataset(norm)
         return data_class(
-            root="data/imagenet",
+            root=os.path.join(ROOT_DIR,'data','imagenet'),
             split=split,
             transform=transform
         )
