@@ -16,6 +16,6 @@ def load_dataset(dataset, model_type):
     if dataset=='NewsGroups':
         data = NewsGroups(0.2, 8, 3000)
     else:
-        data = data_class[dataset](0.2, 8, 3000, transforms)
+        data = data_class[dataset](0.2,256, 3000, transforms)
     
     return data
