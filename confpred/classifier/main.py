@@ -9,7 +9,7 @@ from sklearn.metrics import f1_score
 
 device = 'cuda:1' if torch.cuda.is_available() and torch.cuda.device_count()>1 else 'cuda' if torch.cuda.is_available() else 'cpu'
 
-def evaluate(model, dataloader, criterion, logits=False):
+def evaluate(model, dataloader, criterion, device=device):
     
     model.eval()
     
@@ -20,7 +20,7 @@ def evaluate(model, dataloader, criterion, logits=False):
     
     to_numpy = lambda x: x.detach().cpu().numpy() if "cuda" in device else x.numpy()
     with torch.no_grad():
-        for data in dataloader:
+        for _, data in tqdm(enumerate(dataloader, 0),total=len(dataloader)):
             data = [d.to(device) for d in data]
             inputs = data[:-1]
             labels = data[-1]
@@ -47,7 +47,8 @@ def train(model,
         dev_dataloader,
         criterion,
         epochs=15,
-        patience=3):
+        patience=3,
+        device=device):
 
     early_stopper = EarlyStopper(patience=patience)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
@@ -87,7 +88,8 @@ def train(model,
             
         _, predicted_labels, true_labels, val_loss = evaluate(model,
                                                         dev_dataloader,
-                                                        criterion)
+                                                        criterion,
+                                                        device=device)
         print(f'val_loss: {val_loss:.3f}')
         
         f1 = f1_score(true_labels, predicted_labels, average='weighted')

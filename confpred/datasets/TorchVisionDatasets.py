@@ -1,15 +1,14 @@
 from .Datasets import Datasets
+from confpred.utils import ROOT_DIR
 
 import torch
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-import math
+import os
 
 from transformers import AutoImageProcessor
 
 from abc import ABC, abstractmethod
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class TorchVisionDatasets(Datasets, ABC):
     def __init__(
@@ -52,7 +51,7 @@ class TorchVisionDatasets(Datasets, ABC):
     def _get_dataset(self, norm, train=True):
         data_class, transform = self._dataset(norm)
         return data_class(
-            root="data",
+            root=os.path.join(ROOT_DIR,'data'),
             train=train,
             download=True,
             transform=transform

@@ -1,6 +1,7 @@
 from confpred import ConformalPredictor,SparseScore,SoftmaxScore
 from confpred.classifier import load_model, evaluate
 from confpred.datasets import load_dataset
+from confpred.utils import ROOT_DIR
 
 from entmax.losses import SparsemaxLoss, Entmax15Loss
 import torch
@@ -22,23 +23,23 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
     
     model = load_model(dataset, model_type, loss, device)
     
-    fname = f'./data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
+    fname = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
     if os.path.isfile(fname):
         print('Loading predictions.')
-        path = f'./data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
+        path = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
         with open(path, 'rb') as f:
             test_proba = pickle.load(f)
-        path = f'./data/predictions/{dataset}_{seed}_test_true.pickle'
+        path = f'{ROOT_DIR}/data/predictions/{dataset}_{seed}_test_true.pickle'
         with open(path, 'rb') as f:
             test_true_enc = pickle.load(f)
-        path = f'./data/predictions/{model_type}_{dataset}_cal_{loss}_{transformation}_{seed}_proba.pickle'
+        path = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_cal_{loss}_{transformation}_{seed}_proba.pickle'
         with open(path, 'rb') as f:
             cal_proba = pickle.load(f)
-        path = f'./data/predictions/{dataset}_{seed}_cal_true.pickle'
+        path = f'{ROOT_DIR}/data/predictions/{dataset}_{seed}_cal_true.pickle'
         with open(path, 'rb') as f:
             cal_true_enc = pickle.load(f)
     else:
-        model.load_state_dict(torch.load(f'./models/{model_type}_{dataset}_{loss}_{seed}_{epochs}_model.pth', map_location=torch.device(device)))
+        model.load_state_dict(torch.load(f'{ROOT_DIR}/models/{model_type}_{dataset}_{loss}_{seed}_{epochs}_model.pth', map_location=torch.device(device)))
         print('Running predictions.')
         if loss == 'sparsemax':
             criterion = SparsemaxLoss()
@@ -51,13 +52,13 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
                                         model,
                                         data.test,
                                         criterion,
-                                        True)
+                                        device=device)
 
         cal_proba, _, cal_true, _ = evaluate(
                                         model,
                                         data.cal,
                                         criterion,
-                                        True)
+                                        device=device)
 
     #One Hot Encoding
         test_true_enc = np.zeros((test_true.size, test_true.max()+1), dtype=int)
@@ -69,10 +70,10 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
         predictions = {'test':{'proba':test_proba,'true':test_true_enc},
                        'cal':{'proba':cal_proba,'true':cal_true_enc}}
         for dataset_type in ['cal','test']:
-            with open(f'./data/predictions/{dataset}_{seed}_{dataset_type}_true.pickle', 'wb') as f:
+            with open(f'{ROOT_DIR}/data/predictions/{dataset}_{seed}_{dataset_type}_true.pickle', 'wb') as f:
                 pickle.dump(predictions[dataset_type]['true'], f)
             with open(
-                f'./data/predictions/{model_type}_{dataset}_{dataset_type}_{loss}' +
+                f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_{dataset_type}_{loss}' +
                     f'_{transformation}_{seed}_{"proba"}.pickle'
                 , 'wb'
             ) as f:

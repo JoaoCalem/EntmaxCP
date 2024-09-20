@@ -7,8 +7,6 @@ from transformers import AutoImageProcessor
 
 from abc import ABC, abstractmethod
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 class Datasets(ABC):
     @abstractmethod
     def __init__(
