@@ -30,6 +30,7 @@ def load_model(dataset, model_type, loss, device):
                         1,
                         transformation=loss).to(device)
     elif model_type == 'vit':
+        print('VIT model')
         model = FineTuneViT(n_class,transformation=loss).to(device)
     elif model_type == 'bert':
         model = FineTuneBertForSequenceClassification(n_class, transformation=loss).to(device)

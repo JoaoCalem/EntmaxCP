@@ -6,8 +6,8 @@ datasets=("ImageNet")  # Replace with your datasets
 losses=("entmax" "sparsemax" "softmax")  # Replace with your loss functions
 seeds=(23 05 19 95 42)  # Replace with your seeds
 # Define the other optional parameters
-epochs=20  # Default number of epochs
-patience=3  # Default patience
+epochs=5  # Default number of epochs
+patience=2  # Default patience
 model="vit"  # Change to "vit" 
 
 # Loop through each combination of model, dataset, and loss
