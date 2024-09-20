@@ -21,7 +21,7 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
 
     data = load_dataset(dataset, model_type)
     
-    model = load_model(dataset, model_type, loss, device)
+    model = load_model(dataset, model_type, transformation, device)
     
     fname = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
     if os.path.isfile(fname):
