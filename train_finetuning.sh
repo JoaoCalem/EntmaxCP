@@ -6,7 +6,7 @@ datasets=("NewsGroups")  # Replace with your datasets
 losses=("entmax" "sparsemax" "softmax")  # Replace with your loss functions
 seeds=(23)  # Replace with your seeds
 # Define the other optional parameters
-epochs=1  # Default number of epochs
+epochs=20  # Default number of epochs
 patience=2  # Default patience
 model="bert"  # Change to "vit" 
 
