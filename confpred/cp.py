@@ -17,9 +17,6 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
 
     #device = 'cuda' if torch.cuda.is_available() else 'cpu'
     device = 'cpu'
-    data = load_dataset(dataset, model_type)
-    
-    model = load_model(dataset, model_type, transformation, device)
     
     fname = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
     if os.path.isfile(fname):
@@ -37,6 +34,9 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
         with open(path, 'rb') as f:
             cal_true_enc = pickle.load(f)
     else:
+        data = load_dataset(dataset, model_type)
+    
+        model = load_model(dataset, model_type, transformation, device)
         model.load_state_dict(torch.load(f'{ROOT_DIR}/models/{model_type}_{dataset}_{loss}_{seed}_{epochs}_model.pth', map_location=torch.device(device)))
         print('Running predictions.')
         if loss == 'sparsemax':
