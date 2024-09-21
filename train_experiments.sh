@@ -20,7 +20,7 @@ do
             for seed in "${seeds[@]}"
             do
                 # Create a unique save filename based on model, dataset, and loss
-                save_filename="${model}_${dataset}_${loss}_${seed}_${epochs}_model"
+                save_filename="${model}_${dataset}_${loss}_${seed}_${epochs}"
 
                 # Run the Python script with the current arguments
                 python example_usage/train.py "$model" "$dataset" "$loss" "$save_filename" --seed "$seed" --epochs "$epochs" --patience "$patience"
