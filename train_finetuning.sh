@@ -27,4 +27,5 @@ do
             # Optionally print a message after each run (for debugging/logging purposes)
             echo "Run with model=$model, dataset=$dataset, loss=$loss, seed=$seed completed."
         done
-        
+    done
+done
