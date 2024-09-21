@@ -16,9 +16,7 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
     #dataset='CIFAR100' #CIFAR100 or MNIST
 
     #device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    device="cpu"
-
-
+    device = 'mps'
     data = load_dataset(dataset, model_type)
     
     model = load_model(dataset, model_type, transformation, device)

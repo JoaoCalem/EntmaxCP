@@ -18,7 +18,7 @@ def evaluate(model, dataloader, criterion, device=device):
     true_labels = []
     losses = []
     
-    to_numpy = lambda x: x.detach().cpu().numpy() if "cuda" in device else x.numpy()
+    to_numpy = lambda x: x.numpy() if "cpu" in device else x.detach().cpu().numpy()
     with torch.no_grad():
         for _, data in tqdm(enumerate(dataloader, 0),total=len(dataloader)):
             data = [d.to(device) for d in data]
