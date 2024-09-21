@@ -62,10 +62,10 @@ def run_train(model_type, dataset, loss, save_name, seed, epochs, patience):
         'f1_history':f1_history,
     }
 
-    with open(f'{save_name}/config.json', 'w') as f:
+    with open(f'{save_name}_config.json', 'w') as f:
         json.dump(results, f)
         
-    torch.save(model.state_dict(), f'{save_name}/model.pth')
+    torch.save(model.state_dict(), f'{save_name}_model.pth')
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Train model.")
