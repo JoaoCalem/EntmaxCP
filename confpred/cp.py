@@ -37,7 +37,7 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
         data = load_dataset(dataset, model_type)
     
         model = load_model(dataset, model_type, transformation, device)
-        model.load_state_dict(torch.load(f'{ROOT_DIR}/models/{model_type}_{dataset}_{loss}_{seed}_{epochs}_model.pth', map_location=torch.device(device)))
+        model.load_state_dict(torch.load(f'{ROOT_DIR}/models/training/{model_type}_{dataset}_{loss}_{seed}_{epochs}_model_model.pth', map_location=torch.device(device)))
         print('Running predictions.')
         if loss == 'sparsemax':
             criterion = SparsemaxLoss()
