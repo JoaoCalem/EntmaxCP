@@ -10,7 +10,7 @@ import pandas as pd
 import os.path
 import pickle
 
-def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
+def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20, disallow_empty = False, use_temperature = False):
     #loss = 'softmax' #sparsemax, softmax or entmax15
     transformation = 'logits'
     #dataset='CIFAR100' #CIFAR100 or MNIST
@@ -85,7 +85,7 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20):
         cp = ConformalPredictor(SparseScore(1.5))
     
     cp.calibrate(cal_true_enc, cal_proba, alpha)
-    avg_set_size, coverage = cp.evaluate(test_true_enc, test_proba)
+    avg_set_size, coverage = cp.evaluate(test_true_enc, test_proba, disallow_empty, use_temperature)
     
     return avg_set_size, coverage
 

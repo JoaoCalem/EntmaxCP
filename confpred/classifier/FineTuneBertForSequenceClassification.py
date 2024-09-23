@@ -1,6 +1,6 @@
 """Joao Calem - FineTuneBertForSequenceClassification.py"""
 
-from transformers import BertForSequenceClassification, AdamW, BertConfig
+from transformers import RobertaForSequenceClassification, AdamW, BertConfig
 import torch.nn as nn
 
 from .BaseClassifier import BaseClassifier
@@ -16,8 +16,8 @@ class FineTuneBertForSequenceClassification(BaseClassifier):
         
         super().__init__(transformation) 
 
-        self.bert = BertForSequenceClassification.from_pretrained(
-                "bert-base-uncased",
+        self.bert = RobertaForSequenceClassification.from_pretrained(
+                "roberta-large",
                 num_labels=n_classes,  # Number of labels (20) corresponds to the 20 newsgroups dataset
                 output_attentions=False,  # Do not output attention weights
                 output_hidden_states=False,  # Do not output hidden states

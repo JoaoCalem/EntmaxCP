@@ -16,13 +16,13 @@ hostname
 pyenv activate entmaxcp
 # Define the list of models, datasets, and losses to loop through
 #models=("cnn" "vit")  # Add models if needed
-datasets=("CIFAR10" "CIFAR100")  # Replace with your datasets
+datasets=("NewsGroups")  # Replace with your datasets
 losses=("entmax" "sparsemax" "softmax")  # Replace with your loss functions
-seeds=(05 19 95 42)
+seeds=(23 05 19 95 42)
 # Define the other optional parameters
-epochs=5  # Default number of epochs
+epochs=20  # Default number of epochs
 patience=2  # Default patience
-model="vit"  # Change to "vit"
+model="bert"  # Change to "vit"
 
 
 for loss in "${losses[@]}"

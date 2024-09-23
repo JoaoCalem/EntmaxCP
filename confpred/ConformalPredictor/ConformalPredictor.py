@@ -1,6 +1,7 @@
 import numpy as np
 from abc import ABC, abstractmethod
-
+from entmax.activations import entmax15, sparsemax
+import torch
 class ConformalPredictor():
     def __init__(self,score):
         self.score = score
@@ -14,11 +15,23 @@ class ConformalPredictor():
         except TypeError:
             self.q_hat = np.quantile(cal_scores, q_level, interpolation = 'higher')
     
-    def predict(self, test_pred, disallow_empty = False):
+    def predict(self, test_pred, disallow_empty = False,use_temperature = False):
         
-        test_scores = self.score.get_multiple_scores(test_pred)
-        test_match = test_scores<= self.q_hat
-    
+        if use_temperature:
+            if self.score.alpha == 1.5:
+                qhat = self.q_hat
+                pred_ent = entmax15((2/qhat)*torch.tensor(test_pred), dim=-1).numpy()
+                test_match = pred_ent>0
+            elif self.score.alpha == 2:
+                qhat = self.q_hat
+                pred_ent = sparsemax((1/qhat)*torch.tensor(test_pred), dim=-1).numpy()
+                test_match = pred_ent>0
+            else:
+                raise ValueError('Temperature only supported for alpha = 1.5 or 2')
+        else:
+            test_scores = self.score.get_multiple_scores(test_pred)
+            test_match = test_scores<= self.q_hat
+
         if disallow_empty:
             helper = np.zeros(test_pred[(test_match.sum(axis = 1)==0)].shape)
             helper[np.arange(helper.shape[0]),test_pred[(test_match.sum(axis = 1)==0)].argmax(axis = 1)]=1
@@ -26,9 +39,9 @@ class ConformalPredictor():
         
         return test_match
     
-    def evaluate(self, test_true, test_pred, disallow_empty = False):
+    def evaluate(self, test_true, test_pred, disallow_empty = False,use_temperature = False):
         n_test = test_pred.shape[0]
-        test_match = self.predict(test_pred, disallow_empty)
+        test_match = self.predict(test_pred, disallow_empty,use_temperature)
         set_size = test_match.sum(axis = 1).mean()
         coverage = test_match[test_true.astype(bool)].sum()/n_test
         return set_size, coverage
