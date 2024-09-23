@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=vit_tune    # Job name
+#SBATCH --job-name=roberta    # Job name
 #SBATCH --output="job.%x.%j.out" # Name of stdout output file (%x expands to job name and %j expands to %jobId)
 #SBATCH --gres=gpu:1            # Number of GPUs to be used
 #SBATCH --qos=gpu-medium         # QOS to be used
