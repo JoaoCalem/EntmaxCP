@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=bertnews    # Job name
+#SBATCH --job-name=roberta    # Job name
 #SBATCH --output="job.%x.%j.out" # Name of stdout output file (%x expands to job name and %j expands to %jobId)
 #SBATCH --gres=gpu:1            # Number of GPUs to be used
 #SBATCH --qos=gpu-medium         # QOS to be used
@@ -24,6 +24,7 @@ epochs=20  # Default number of epochs
 patience=2  # Default patience
 model="bert"  # Change to "vit"
 
+echo "Run with model=$model, dataset=$dataset, loss=$loss, seed=$seed started."
 
 for loss in "${losses[@]}"
 do
@@ -32,8 +33,6 @@ do
             # Loop through all seeds for cnn model
         for seed in "${seeds[@]}"
         do
-            echo "Run with model=$model, dataset=$dataset, loss=$loss, seed=$seed started."
-
             # Create a unique save filename based on model, dataset, and loss
             save_filename="/mnt/data-poseidon/margarida/training/${model}_${dataset}_${loss}_${seed}_${epochs}_model"
 
