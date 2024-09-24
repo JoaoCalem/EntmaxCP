@@ -1,5 +1,6 @@
 from confpred.utils import EarlyStopper
 
+from transformers import AdamW, get_linear_schedule_with_warmup
 import torch
 from torch import nn
 import torch.optim as optim
@@ -51,7 +52,11 @@ def train(model,
         device=device):
 
     early_stopper = EarlyStopper(patience=patience)
-    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+    total_steps = len(train_dataloader) * epochs
+
+    # Create the optimizer and scheduler for fine-tuning the model
+    optimizer = AdamW(model.parameters(), lr=2e-5)
+    scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0, num_training_steps=total_steps)
     
     train_history = []
     val_history = []
@@ -63,7 +68,9 @@ def train(model,
               
         train_losses = []
             # zero the parameter gradients
-        for _, data in tqdm(enumerate(train_dataloader, 0),total=len(train_dataloader)):
+            
+        progress_bar = tqdm(train_dataloader, desc="Training", position=0, leave=True)
+        for data in progress_bar:
             # get the inputs; data is a list of [inputs, labels]
             data = [d.to(device) for d in data]
             inputs = data[:-1]
@@ -76,10 +83,16 @@ def train(model,
             outputs = model(*inputs)
             loss = criterion(outputs, labels)
             loss.backward()
+            
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            
             optimizer.step()
+            scheduler.step()
 
             # print statistics
             train_losses.append(loss)
+            
+            progress_bar.set_description(f"Training - Loss: {loss.item():.4f}")
         
             
             

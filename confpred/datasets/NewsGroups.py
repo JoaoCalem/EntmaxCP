@@ -2,7 +2,7 @@ from .Datasets import Datasets
 
 import torch
 from torch.utils.data import TensorDataset, DataLoader
-from transformers import RobertaTokenizer
+from transformers import BertTokenizer
 from sklearn.datasets import fetch_20newsgroups
 import pandas as pd
 from tqdm import tqdm
@@ -20,7 +20,7 @@ class NewsGroups(Datasets):
         newsgroups = fetch_20newsgroups(subset='all', remove=('headers', 'footers', 'quotes'))
         data = pd.DataFrame({'text_data': newsgroups.data, 'label': newsgroups.target})
 
-        tokenizer = RobertaTokenizer.from_pretrained("roberta-large")
+        tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
         max_seq_len = 128
         
         input_ids, attention_masks, labels = self._tokenize_data(data, tokenizer, max_seq_len)
