@@ -2,6 +2,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 from entmax.activations import entmax15, sparsemax
 import torch
+from torch.nn.functional import softmax
 class ConformalPredictor():
     def __init__(self,score):
         self.score = score
@@ -79,11 +80,11 @@ class SparseScore(ConformalScore):
     
 class SoftmaxScore(ConformalScore):
     def get_single_score(self, cal_true, cal_pred) -> np.array:
-        
+        cal_sm = softmax(torch.tensor(cal_pred),dim=-1).numpy()
         true_mask = cal_true.astype(bool)
-        cal_scores = 1 - cal_pred[true_mask]
+        cal_scores = 1 - cal_sm[true_mask]
         return cal_scores
     
     def get_multiple_scores(self, test_pred) -> np.array:
-        
-        return 1 - test_pred
+        test_sm = softmax(torch.tensor(test_pred),dim=-1).numpy()
+        return 1 - test_sm

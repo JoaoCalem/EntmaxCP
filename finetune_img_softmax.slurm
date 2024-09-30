@@ -15,17 +15,19 @@ pyenv activate entmaxcp
 #models=("cnn" "vit")  # Add models if needed
 dataset="ImageNet"  # Replace with your datasets
 loss="softmax"  # Replace with your loss functions
-seed=23 # Replace with your seeds
+seeds=(05 19 95 42) # Replace with your seeds
 # Define the other optional parameters
-epochs=5  # Default number of epochs
+epochs=10  # Default number of epochs
 patience=2  # Default patience
 model="vit"  # Change to "vit"
-
+for seed in "${seeds[@]}"
+do
 # Create a unique save filename based on model, dataset, and loss
-save_filename="/mnt/data-poseidon/margarida/training/${model}_${dataset}_${loss}_${seed}_${epochs}_model"
+    save_filename="/mnt/data-poseidon/margarida/training/${model}_${dataset}_${loss}_${seed}_${epochs}_model"
 
-# Run the Python script with the current arguments
-python example_usage/train.py "$model" "$dataset" "$loss" "$save_filename" --seed "$seed" --epochs "$epochs" --patience "$patience"
+    # Run the Python script with the current arguments
+    python example_usage/train.py "$model" "$dataset" "$loss" "$save_filename" --seed "$seed" --epochs "$epochs" --patience "$patience"
 
-# Optionally print a message after each run (for debugging/logging purposes)
-echo "Run with model=$model, dataset=$dataset, loss=$loss, seed=$seed completed."
+    # Optionally print a message after each run (for debugging/logging purposes)
+    echo "Run with model=$model, dataset=$dataset, loss=$loss, seed=$seed completed."
+done
