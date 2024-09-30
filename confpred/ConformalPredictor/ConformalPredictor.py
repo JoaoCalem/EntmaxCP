@@ -46,6 +46,13 @@ class ConformalPredictor():
         set_size = test_match.sum(axis = 1).mean()
         coverage = test_match[test_true.astype(bool)].sum()/n_test
         return set_size, coverage
+    
+class APSPredictor(ConformalPredictor):
+    def predict(self, test_pred):
+        val_smx = self.score.get_multiple_scores(test_pred)
+        val_pi = val_smx.argsort(1)[:, ::-1]
+        val_srt = np.take_along_axis(val_smx, val_pi, axis=1).cumsum(axis=1)
+        return np.take_along_axis(val_srt <= self.q_hat, val_pi.argsort(axis=1), axis=1)
 
 class ConformalScore(ABC):
     
@@ -88,3 +95,13 @@ class SoftmaxScore(ConformalScore):
     def get_multiple_scores(self, test_pred) -> np.array:
         test_sm = softmax(torch.tensor(test_pred),dim=-1).numpy()
         return 1 - test_sm
+    
+class APSScore(ConformalScore):
+    def get_single_score(self, cal_true, cal_pred) -> np.array:
+        cal_sm = softmax(torch.tensor(cal_pred),dim=-1).numpy()
+        cal_labels = cal_true.argmax(axis=1)
+        cal_pi = cal_sm.argsort(1)[:,::-1]
+        cal_srt = np.take_along_axis(cal_sm,cal_pi,axis=1).cumsum(axis=1)
+        return np.take_along_axis(cal_srt,cal_pi.argsort(axis=1),axis=1)[range(n),cal_labels]
+    def get_multiple_scores(self, test_pred) -> np.array:
+        return softmax(torch.tensor(test_pred),dim=-1).numpy()
