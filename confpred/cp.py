@@ -10,7 +10,10 @@ import pandas as pd
 import os.path
 import pickle
 
-def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20, disallow_empty = False, use_temperature = False):
+def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20, disallow_empty = False, use_temperature = False, model_loss = None):
+    if model_loss is None:
+        model_loss = loss
+    
     #loss = 'softmax' #sparsemax, softmax or entmax15
     transformation = 'logits'
     #dataset='CIFAR100' #CIFAR100 or MNIST
@@ -18,16 +21,16 @@ def run_cp(dataset, loss, alpha, seed, model_type='cnn', epochs=20, disallow_emp
     #device = 'cuda' if torch.cuda.is_available() else 'cpu'
     device = 'cpu'
     
-    fname = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
+    fname = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_test_{model_loss}_{transformation}_{seed}_proba.pickle'
     if os.path.isfile(fname):
         print('Loading predictions.')
-        path = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_test_{loss}_{transformation}_{seed}_proba.pickle'
+        path = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_test_{model_loss}_{transformation}_{seed}_proba.pickle'
         with open(path, 'rb') as f:
             test_proba = pickle.load(f)
         path = f'{ROOT_DIR}/data/predictions/{dataset}_{seed}_test_true.pickle'
         with open(path, 'rb') as f:
             test_true_enc = pickle.load(f)
-        path = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_cal_{loss}_{transformation}_{seed}_proba.pickle'
+        path = f'{ROOT_DIR}/data/predictions/{model_type}_{dataset}_cal_{model_loss}_{transformation}_{seed}_proba.pickle'
         with open(path, 'rb') as f:
             cal_proba = pickle.load(f)
         path = f'{ROOT_DIR}/data/predictions/{dataset}_{seed}_cal_true.pickle'
