@@ -1,7 +1,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
 from entmax.activations import entmax15, sparsemax
-from entmax import entmax_bisect
 import torch
 from torch.nn.functional import softmax
 class ConformalPredictor():
@@ -28,14 +27,8 @@ class ConformalPredictor():
                 qhat = self.q_hat
                 pred_ent = sparsemax((1/qhat)*torch.tensor(test_pred), dim=-1).numpy()
                 test_match = pred_ent>0
-            elif self.score.alpha > 1:
-                qhat = self.q_hat
-                gamma = 1/(self.score.alpha-1)
-                pred_ent = entmax_bisect((gamma/qhat)*torch.tensor(test_pred),
-                                         alpha=self.score.alpha, dim=-1).numpy()
-                test_match = pred_ent>0
             else:
-                raise ValueError('Temperature only supported for alpha >1')
+                raise ValueError('Temperature only supported for alpha = 1.5 or 2')
         else:
             test_scores = self.score.get_multiple_scores(test_pred)
             test_match = test_scores<= self.q_hat
@@ -55,7 +48,7 @@ class ConformalPredictor():
         return set_size, coverage
     
 class APSPredictor(ConformalPredictor):
-    def predict(self, test_pred,disallow_empty = False,use_temperature = False):
+    def predict(self, test_pred):
         val_smx = self.score.get_multiple_scores(test_pred)
         val_pi = val_smx.argsort(1)[:, ::-1]
         val_srt = np.take_along_axis(val_smx, val_pi, axis=1).cumsum(axis=1)
@@ -105,11 +98,10 @@ class SoftmaxScore(ConformalScore):
     
 class APSScore(ConformalScore):
     def get_single_score(self, cal_true, cal_pred) -> np.array:
-        n_cal = cal_true.shape[0]
         cal_sm = softmax(torch.tensor(cal_pred),dim=-1).numpy()
         cal_labels = cal_true.argmax(axis=1)
         cal_pi = cal_sm.argsort(1)[:,::-1]
         cal_srt = np.take_along_axis(cal_sm,cal_pi,axis=1).cumsum(axis=1)
-        return np.take_along_axis(cal_srt,cal_pi.argsort(axis=1),axis=1)[range(n_cal),cal_labels]
+        return np.take_along_axis(cal_srt,cal_pi.argsort(axis=1),axis=1)[range(n),cal_labels]
     def get_multiple_scores(self, test_pred) -> np.array:
         return softmax(torch.tensor(test_pred),dim=-1).numpy()
